@@ -43,11 +43,8 @@
     "lint-staged": "^10.2.11",
     "nodemon": "^2.0.4",
     "sass": "^1.43.4",
-    "sass-loader": "10.0.0",
+    "sass-loader": "10.1.1",
     "vuex": "^3.6.2"
-  },
-  "gitHooks": {
-    "pre-commit": "npm run lint"
   },
   "browserslist": [
     "> 1%",

@@ -32,6 +32,7 @@ import markdown from 'highlight.js/lib/languages/markdown'
 import sql from 'highlight.js/lib/languages/sql'
 import bash from 'highlight.js/lib/languages/bash'
 import nginx from 'highlight.js/lib/languages/nginx'
+import python from 'highlight.js/lib/languages/python'
 import 'highlight.js/styles/atom-one-dark-reasonable.css'
 
 hljs.registerLanguage('javascript', javascript)
@@ -48,6 +49,7 @@ hljs.registerLanguage('markdown', markdown)
 hljs.registerLanguage('sql', sql)
 hljs.registerLanguage('bash', bash)
 hljs.registerLanguage('nginx', nginx)
+hljs.registerLanguage('python', python)
 
 export default {
   name: 'Page',
