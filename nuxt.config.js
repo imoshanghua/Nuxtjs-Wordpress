@@ -65,11 +65,11 @@ export default {
   proxy: {
     '/wp-json': {
       // target: 'https://www.xuanmo.xin',
-      target: 'https://moshanghua.net'
+      target: 'https://chixm.moshanghua.net'
     },
     '/wp-content': {
       // target: 'https://www.xuanmo.xin'
-      target: 'https://moshanghua.net'
+      target: 'https://chixm.moshanghua.net'
     }
   },
 
