@@ -2,7 +2,7 @@ export default {
   mode: 'universal',
 
   head: {
-    title: 'Xuanmo Blog | WEB前端笔记',
+    title: '花开陌上 | 谁人踏花拾锦年，陌上花开缓缓归！',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' },
@@ -18,9 +18,9 @@ export default {
       { src: 'https://at.alicdn.com/t/font_556506_1n415osdgrl.js' },
       // { src: '/js/prism.js' },
       // 百度主推文章收录用
-      { src: 'https://zz.bdstatic.com/linksubmit/push.js' },
+      //{ src: 'https://zz.bdstatic.com/linksubmit/push.js' },
       // 加入百度统计js，使用时自行添加为自己的
-      { src: 'https://hm.baidu.com/hm.js?e3a6702fe5553d80fe84804ab8207878' }
+      //{ src: 'https://hm.baidu.com/hm.js?' }
     ]
   },
 
