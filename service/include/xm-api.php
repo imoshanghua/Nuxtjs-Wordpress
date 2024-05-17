@@ -153,7 +153,7 @@ function add_get_blog_info() {
         "description"            => $xm_options["description"],
         "detailsCss"             => $xm_options["details_css"],
         "domain"                 => get_option("xm_vue_options")["domain"],
-        "favicon"                => $xm_options["favicon"],
+        "favicon"                => isset($xm_options["favicon"]) ? $xm_options["favicon"] : '',
         "getAllCountArticle"     => wp_count_posts()->publish,
         "getAllCountCat"         => wp_count_terms("category"),
         "getAllCountComment"     => $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->comments"),
@@ -384,12 +384,15 @@ function add_api_comment_meta_field() {
             global $avatar_colors;
             global $wpdb;
             $result = $wpdb->get_results("SELECT * FROM $wpdb->comments WHERE comment_ID = $object[id]");
-            $author_email = $object["author_email"]
+            $author_email = isset($object["author_email"])
                 ? $object["author_email"]
                 : $result[0]->comment_author_email;
             preg_match("/\d/", md5($author_email), $matches);
+
+            $user_agent = isset($object["author_user_agent"]) ? $object["author_user_agent"] : $result[0]->comment_agent;
+
             return array(
-                "userAgent"          => ($object["author_user_agent"] ? $object["author_user_agent"] : $result[0]->comment_agent),
+                "userAgent"          => $user_agent,
                 "vipStyle"           => get_author_level($author_email),
                 "author_avatar_urls" => "https://$avatar_domain/avatar/" . md5(strtolower(trim($author_email))) . "?s=200",
                 "background"         => $avatar_colors[$matches[0]] // 根据邮箱md5后获取第一个数字生成颜色
@@ -403,7 +406,7 @@ function add_api_comment_meta_field() {
         "get_callback" => function ($object) {
             $comment = get_comments(array(
                 'ID'      => $object["id"],
-                'post_id' => $object->post,
+                'post_id' => isset($object['post']) ? $object['post'] : null,
                 'number'  => 1
             ));
             return array_merge(xm_format_comment_item($comment[0]), array(
