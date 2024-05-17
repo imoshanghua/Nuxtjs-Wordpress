@@ -255,19 +255,26 @@ function xm_get_categories_children_ids($parentId) {
 function xm_get_menu() {
     $mainMenu = [];
     $sourceMenu = wp_get_nav_menu_items("Home");
-    foreach ($sourceMenu as $value) {
+    foreach ($sourceMenu as $key => $value) {
+        if (!is_object($value)){
+            continue;
+        }
         $value->children = [];
         $value->childrenIds = xm_get_categories_children_ids($value->object_id);
         $value->classes = $value->classes[0];
-        for ($i = 0; $i < count($sourceMenu); $i++) {
-            if ($sourceMenu[$i]->menu_item_parent == $value->ID) {
-                $value->children[] = array_splice($sourceMenu, $i, 1, "")[0];
+
+        for ($i = count($sourceMenu) - 1; $i >= 0; $i--) {
+            if (is_object($sourceMenu[$i]) && $sourceMenu[$i]->menu_item_parent == $value->ID) {
+                $value->children[] = array_splice($sourceMenu, $i, 1, [])[0];
             }
         }
     }
     foreach ($sourceMenu as $value) {
-        $value && array_push($mainMenu, $value);
+        if ($value) {
+            array_push($mainMenu, $value);
+        }
     }
+
     return array(
         "mainMenu" => $mainMenu,
         "subMenu"  => wp_get_nav_menu_items("SubMenu")
