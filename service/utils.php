@@ -125,10 +125,10 @@ function recursion_query_common_list(
         $list[$key] = array_merge($format_value, array(
             '_level'      => $uni_key,
             'parent'      => array(
-                'content'     => (string)$parent['content'],
-                'authorName'  => (string)$parent['authorName'],
-                'authorSite'  => (string)$parent['comment_author_url'],
-                'authorLevel' => get_author_level($parent['comment_author_email'])
+                'content'     => isset($parent['content']) ? (string)$parent['content'] : '',
+                'authorName'  => isset($parent['authorName']) ? (string)$parent['authorName'] : '',
+                'authorSite'  => isset($parent['comment_author_url']) ? (string)$parent['comment_author_url'] : '',
+                'authorLevel' => isset($parent['comment_author_email']) ? get_author_level($parent['comment_author_email']) : ''
             )
         ));
 
