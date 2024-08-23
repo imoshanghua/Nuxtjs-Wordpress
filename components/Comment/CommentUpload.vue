@@ -133,8 +133,11 @@ export default {
     _preview(event) {
       const oReader = new FileReader()
       oReader.readAsDataURL(event.target.files[0])
-      oReader.onload = () => (this.previewUrl = oReader.result)
-      this.bFileMark = false
+      oReader.onload = () => {
+        this.previewUrl = oReader.result
+        this.bFileMark = false
+        this._uploadImg()
+      }
     },
 
     // 上传图片
