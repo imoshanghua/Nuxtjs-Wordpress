@@ -24,7 +24,6 @@
           </p>
         </div>
         <div class="btn-wrap">
-          <div v-show="!bFileMark" class="btn btn-upload" @click.stop="_uploadImg">上传文件</div>
           <div class="btn btn-insert" @click.stop="_insertImg">插入到文章</div>
         </div>
         <div v-if="resultImgUrl" class="result-img">
@@ -72,10 +71,10 @@ export default {
     }
     oUploadWrap.ondrop = (e) => {
       e.preventDefault()
+      this.bShowDragWrap = false
       const oReader = new FileReader()
       const oFile = e.dataTransfer.files[0]
-      this.bShowDragWrap = false
-      // 判断文件是会否为图片格式
+      // 判断文件是否为图片格式
       if (oFile.type.indexOf('image') === -1) {
         this.$message({
           title: '请上传正确的图片格式',
@@ -83,81 +82,99 @@ export default {
         })
         this.bFileMark = true
       } else {
-        oReader.readAsDataURL(oFile)
-        oReader.onload = async () => {
-          const data = new FormData()
-          this.previewUrl = oReader.result
-          this.bFileMark = false
-          data.append('postID', this.$route.params.id)
-          data.append('file', oReader.result)
-          data.append('url', this.contentUrl)
-          data.append('mark', 'upload')
-          this.handleUpload(data)
-        }
+        this._previewAndUpload(oFile)
       }
     }
   },
   methods: {
     ...mapActions(['uploadImage', 'deleteImage']),
 
-    async handleUpload(requestData) {
+    async handleUpload(requestData, retryCount = 3) {
       try {
         // 上传实时进度
         const config = {
-          onUploadProgress: progressEvent => (this.currentProgress = progressEvent.loaded / progressEvent.total * 100)
-        }
-        const { data } = await this.uploadImage({
+          onUploadProgress: progressEvent => {
+            this.currentProgress = (progressEvent.loaded / progressEvent.total) * 100;
+          },
+          timeout: 120000 // 设置超时时间
+        };
+        const data = await this.uploadImage({
           requestData,
           config
-        })
-        if (!data.code) {
+        });
+
+        if (!data || typeof data.code === "undefined") {
+          throw new Error('上传响应无效');
+        }
+
+        if (data.code !== 200) {
           this.$message({
             title: '上传失败！',
             type: 'error'
-          })
-          this.currentProgress = 0
+          });
+          this.currentProgress = 0;
         } else {
-          this.resultImgUrl = data.path
-          this.resFileName = data.name
+          this.resultImgUrl = data.data.path;
+          this.resFileName = data.data.name;
         }
       } catch (error) {
-        if (error === 404) {
+        if (retryCount > 0) {
+          await this.handleUpload(requestData, retryCount - 1);
+        } else {
           this.$message({
-            title: '上传失败(404)！',
+            title: '上传失败！请检查网络或稍后重试。',
             type: 'error'
-          })
+          });
         }
       }
     },
 
     _preview(event) {
+      const file = event.target.files[0]
+      if (!file) return
+
+      if (file.size / 1024 > 2048) {
+        this.$message({
+          title: '请上传小于2M的图片！',
+          type: 'error'
+        })
+        this.bFileMark = true
+        this.$refs.inpFile.value = ''
+        return
+      }
+
+      this._previewAndUpload(file)
+    },
+
+    _previewAndUpload(file) {
       const oReader = new FileReader()
-      oReader.readAsDataURL(event.target.files[0])
+      oReader.readAsDataURL(file)
       oReader.onload = () => {
         this.previewUrl = oReader.result
         this.bFileMark = false
-        this._uploadImg()
+        this._uploadImg(file) // 直接上传文件
       }
     },
 
     // 上传图片
-    async _uploadImg() {
-      const _file = this.$refs.inpFile
-      if (_file.value) {
-        const data = new FormData()
-        if (_file.files[0].size / 1024 > 2048) {
-          this.$message({
-            title: '请上传小于2M的图片！',
-            type: 'error'
-          })
-        } else {
-          data.append('postID', this.$route.params.id)
-          data.append('file', _file.files[0])
-          data.append('url', this.contentUrl)
-          data.append('mark', 'upload')
-          this.handleUpload(data)
-        }
+    async _uploadImg(file) {
+      if (!file) return
+      if (file.size / 1024 > 2048) {
+        this.$message({
+          title: '请上传小于2M的图片！',
+          type: 'error'
+        })
+        this.bFileMark = true
+        this.$refs.inpFile.value = ''
+        return
       }
+
+      const data = new FormData()
+      data.append('postID', this.$route.params.id)
+      data.append('file', file)
+      data.append('url', this.contentUrl)
+      data.append('mark', 'upload')
+      await this.handleUpload(data)
     },
 
     // 隐藏上传控件
@@ -192,6 +209,13 @@ export default {
 
     // 插入到文章
     _insertImg() {
+      if (!this.resultImgUrl) {
+        this.$message({
+          title: '请先上传图片！',
+          type: 'warning'
+        })
+        return
+      }
       this.$emit('on-confirm', ` [img]${this.resultImgUrl}[/img] `)
       this.$emit('on-close', {
         close: false,
