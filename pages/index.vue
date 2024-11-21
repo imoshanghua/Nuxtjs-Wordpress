@@ -238,6 +238,12 @@ export default {
   }
 }
 
+@media screen and (min-width: 1024px) {
+  .tablet-show {
+    display: none;
+  }
+}
+
 @media screen and (max-width: 1024px) {
   .banner-wrap {
     &.style-1 {
