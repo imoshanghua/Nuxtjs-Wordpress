@@ -29,12 +29,14 @@
     width: 100%;
     height: 1px;
     background: var(--color-border);
-    transition: .4s;
+    transition: transform 1s;
+    transform-origin: right;
   }
 
   &:after {
-    width: 0;
     background: $color-theme;
+    transform: scaleX(0);
+    transform-origin: right;
   }
 
   &:hover {
@@ -43,11 +45,12 @@
     }
 
     &:before {
-      width: 0;
+      transform: scaleX(0);
     }
 
     &:after {
-      width: 100%;
+      transform: scaleX(1);
+      transform-origin: left;
     }
   }
 
