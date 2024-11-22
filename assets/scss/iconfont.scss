@@ -6,6 +6,13 @@
   url('//at.alicdn.com/t/c/font_552040_ebs0urfwux4.ttf?t=1662305814548') format('truetype');
 }
 
+@font-face {
+  font-family: 'iconfont1';  /* Project id 4754607 */
+  src: url('//at.alicdn.com/t/c/font_4754607_o5c0umfj69.woff2?t=1732175688701') format('woff2'),
+       url('//at.alicdn.com/t/c/font_4754607_o5c0umfj69.woff?t=1732175688701') format('woff'),
+       url('//at.alicdn.com/t/c/font_4754607_o5c0umfj69.ttf?t=1732175688701') format('truetype');
+}
+
 .iconfont {
   vertical-align: bottom;
   font-family: "iconfont" !important;
@@ -106,7 +113,10 @@ $iconMap         : (
   "wechat-f"     : "\e63d",
   "sina"         : "\e620",
   "github"       : "\e7ab",
-  "github-f"     : "\e691"
+  "github-f"     : "\e691",
+  "share"        : "\e61e",
+  "share1"       : "\e60b",
+  "share2"       : "\e6c3"
 );
 
 @each $key, $value in $iconMap {

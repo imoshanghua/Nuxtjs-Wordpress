@@ -126,12 +126,26 @@ body {
   );
   @each $level, $size in $title-font-size {
     h#{$level} {
+      position: relative;
       margin: var(--large-gap) 0 calc(var(--base-gap) / 2);
       font-size: $size;
       line-height: $size + 8px;
 
       & + * {
         margin-top: 0 !important;
+      }
+
+      &::after {
+        content: "\##{$level}";
+        position: absolute;
+        opacity: 0;
+        transition: opacity 0.8s ease, transform 0.8s ease;
+        transform: translateX(25px);
+      }
+
+      &:hover::after {
+        opacity: 1;
+        transform: translateX(10px);
       }
     }
   }

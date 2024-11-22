@@ -23,13 +23,15 @@
       </div>
     </header>
 
-    <div class="comment-form-content">
+    <div class="comment-form-content" :class="{ 'has-focus': isFocused }">
       <textarea
         v-model="content"
         class="comment-input--inner"
         name="content"
         rows="8"
         placeholder="留下你的脚印吧~"
+        @focus="isFocused = true"
+        @blur="isFocused = false"
       />
     </div>
 
@@ -124,6 +126,7 @@ export default {
       form,
       content: '',
       loading: false,
+      isFocused: false,
       validate: {
         name: [
           { required: true, message: '昵称不能为空' }
@@ -295,7 +298,23 @@ export default {
     }
 
     &-content {
+      position: relative;
       margin-bottom: var(--base-gap);
+      overflow: hidden;
+
+      &::before {
+        content: "";
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 130px;
+        height: 130px;
+        background: url(https://assets.moshanghua.net/img/bg-tianyi.png) no-repeat;
+        background-size: contain;
+        transition: transform 1s, opacity 1s;
+        transform: translateX(0);
+        opacity: 0.6;
+      }
 
       .comment-input--inner {
         box-sizing: border-box;
@@ -306,6 +325,11 @@ export default {
         background: var(--color-sub-background);
         border-radius: $border-radius;
         resize: vertical;
+      }
+
+      &.has-focus::before {
+        transform: translateX(100%);
+        opacity: 0;
       }
     }
 
